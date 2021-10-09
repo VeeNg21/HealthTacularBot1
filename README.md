@@ -1,4 +1,4 @@
-Name bot: Healthtacular Функции бота
+Name bot: HealthtacularBot
 
 Работает в Telegram
 
