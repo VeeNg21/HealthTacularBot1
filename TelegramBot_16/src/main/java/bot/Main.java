@@ -8,8 +8,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String BOT_NAME = "HealthtacularBot";
-        String BOT_TOKEN = "1961895624:AAH9rK-aenRVsVxdZfMc2yD2BlDRIVe9nAo";
+        String BOT_NAME = "";
+        String BOT_TOKEN = "";
 
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
