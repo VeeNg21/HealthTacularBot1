@@ -2,30 +2,38 @@ package bot.Commands;
 
 import bot.Bot;
 import bot.Game.MainGame;
-import bot.Game.Player;
+import bot.Game.DefaultPlayer;
+import bot.Main;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 public class PlayCommand extends ServiceCommand {
 
-    public PlayCommand(String identifier, String description){
+    private MainGame mainGame;
+
+    public PlayCommand(String identifier, String description, MainGame mainGame){
         super(identifier, description);
+        this.mainGame = mainGame;
     }
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
 
-        Player player = new Player();
         String userName = (user.getUserName() != null) ? user.getUserName() :
                 String.format("%s %s", user.getLastName(), user.getFirstName());
 
-        MainGame.getRandomValue(player);
-        String result = "To end the game write: stop.\n" + player;
-        sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName, result);
 
-        Bot.inGame = true;
-        Bot.players.put(chat.getId(), player);
+        DefaultPlayer defaultPlayer = new DefaultPlayer();
+        defaultPlayer.setChatId(chat.getId());
+
+        System.out.println("PlayCommand");
+        mainGame.setPlayerList(chat.getId(), defaultPlayer);
+
+        mainGame.getRandomValue(mainGame.getPlayer(defaultPlayer.getChatId()));
+
+        String result = "To end the game write: stop.\n" + defaultPlayer;
+        sendAnswer(absSender, defaultPlayer.getChatId(), this.getCommandIdentifier(), userName, result);
 
     }
 }
