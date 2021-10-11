@@ -1,0 +1,40 @@
+package bot.Game;
+
+public class DefaultPlayer implements Player{
+
+    private int count;
+    private String expectedAnswer;
+    private String currentAnswer;
+    private boolean InGame;
+    private Long chatId;
+
+
+    public void setExpectedAnswer(String expectedAnswer){
+        this.expectedAnswer = expectedAnswer;
+    }
+    public void setCurrentAnswer(String currentAnswer) {this.currentAnswer = currentAnswer;}
+    public String getCurrentAnswer() { return currentAnswer; }
+    public void upCount(){count++;}
+
+    public boolean isInGame() {
+        return InGame;
+    }
+
+    public void setInGame(boolean inGame) {
+        InGame = inGame;
+    }
+
+    @Override
+    public String toString() {
+        return "Scores: " + count + "\n" + expectedAnswer + "\n";
+    }
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
+}
