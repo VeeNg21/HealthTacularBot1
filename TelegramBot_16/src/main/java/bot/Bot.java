@@ -1,6 +1,5 @@
 package bot;
 
-import bot.Commands.HelpCommand;
 import bot.Commands.PlayCommand;
 import bot.Commands.StartCommand;
 import bot.Game.MainGame;
@@ -8,10 +7,7 @@ import bot.Game.DefaultPlayer;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.HashMap;
 
 public class Bot extends TelegramLongPollingCommandBot {
 
@@ -25,8 +21,8 @@ public class Bot extends TelegramLongPollingCommandBot {
         this.BOT_TOKEN = BOT_TOKEN;
 
         register(new StartCommand("start", "Start"));
+        register(new StartCommand("help", "Help"));
         register(new PlayCommand("play", "Play game", mainGame));
-        register(new HelpCommand("help", "Help"));
     }
 
     @Override
@@ -40,7 +36,9 @@ public class Bot extends TelegramLongPollingCommandBot {
     }
 
 
-
+    /**
+     * Ответ на запрос, не являющийся командой
+     */
     @Override
     public void processNonCommandUpdate(Update update) {
 
