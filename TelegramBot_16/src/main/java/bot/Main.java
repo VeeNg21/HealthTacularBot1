@@ -4,17 +4,27 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.io.*;
+import java.util.Properties;
+
 public class Main {
 
     public static void main(String[] args) {
 
-        String BOT_NAME = "";
-        String BOT_TOKEN = "";
+        Properties properties = new Properties();
 
         try {
+            InputStream is = Main.class.getClassLoader().getResourceAsStream("config.properties");
+            properties.load(is);
+
+            String botName = properties.getProperty("bot_name");
+            String botToken = properties.getProperty("bot_token");
+
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new Bot(BOT_NAME, BOT_TOKEN));
-        } catch (TelegramApiException e) {
+            botsApi.registerBot(new Bot(botName, botToken));
+
+            is.close();
+        } catch (TelegramApiException | IOException e) {
             e.printStackTrace();
         }
     }
