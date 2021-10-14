@@ -27,7 +27,6 @@ public class PlayCommand extends ServiceCommand {
         DefaultPlayer defaultPlayer = new DefaultPlayer();
         defaultPlayer.setChatId(chat.getId());
 
-        System.out.println("PlayCommand");
         mainGame.setPlayerList(chat.getId(), defaultPlayer);
 
         mainGame.getRandomValue(mainGame.getPlayer(defaultPlayer.getChatId()));
