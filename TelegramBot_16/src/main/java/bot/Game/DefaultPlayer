@@ -1,6 +1,6 @@
 package bot.Game;
 
-public class DefaultPlayer implements Player{
+public class DefaultPlayer implements Player {
 
     private int count;
     private String expectedAnswer;
@@ -24,11 +24,6 @@ public class DefaultPlayer implements Player{
         InGame = inGame;
     }
 
-    @Override
-    public String toString() {
-        return "Scores: " + count + "\n" + expectedAnswer + "\n";
-    }
-
     public Long getChatId() {
         return chatId;
     }
@@ -36,5 +31,12 @@ public class DefaultPlayer implements Player{
     public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
+
+    @Override
+    public String toString() {
+        return "Scores: " + count + "\n" + expectedAnswer + "\n";
+    }
+
+
 
 }
