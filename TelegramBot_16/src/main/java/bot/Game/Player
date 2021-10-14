@@ -5,4 +5,16 @@ package bot.Game;
  */
 public interface Player {
 
+    void setExpectedAnswer(String expectedAnswer);
+    void setCurrentAnswer(String currentAnswer);
+    String getCurrentAnswer();
+
+    void upCount();
+
+    boolean isInGame();
+    void setInGame(boolean inGame);
+
+    Long getChatId();
+    void setChatId(Long chatId);
+
 }
