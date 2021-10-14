@@ -1,5 +1,7 @@
 package bot.Game;
 
+import org.telegram.telegrambots.meta.api.objects.Update;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,26 @@ public class MainGame extends DefaultPlayer {
                 defaultPlayer.upCount();
                 getRandomValue(defaultPlayer);
                 result = "Correct benefit\nTo end the game write: stop.\n" + defaultPlayer;
+            }
+        }
+        return result;
+    }
+
+    public String inGame(Update update) {
+
+        String result = "";
+        DefaultPlayer defaultPlayer = getPlayer(update.getMessage().getChatId());
+
+        if(defaultPlayer.isInGame()) {
+            if (update.hasMessage() && update.getMessage().hasText()) {
+                if (update.getMessage().getText().equals("stop")) {
+                    defaultPlayer.setInGame(false);
+                    result = "End game";
+                    removePlayer(update.getMessage().getChatId());
+                } else {
+                    String msg = update.getMessage().getText();
+                    result = play(msg, defaultPlayer);
+                }
             }
         }
         return result;
