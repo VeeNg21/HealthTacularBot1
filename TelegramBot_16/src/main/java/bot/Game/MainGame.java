@@ -2,6 +2,7 @@ package bot.Game;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ public class MainGame extends DefaultPlayer {
         items.put("celery", "bones");
     }
 
-    public void getRandomValue(DefaultPlayer defaultPlayer){
+    public void getRandomValue(DefaultPlayer defaultPlayer) throws SQLException {
         Random random = new Random();
         List<String> keys = new ArrayList<>(items.keySet());
         String question = keys.get(random.nextInt(keys.size()));
@@ -34,7 +35,7 @@ public class MainGame extends DefaultPlayer {
         defaultPlayer.setExpectedAnswer("Which organ does this vegetable help: " + question);
     }
 
-    public String play(String message, DefaultPlayer defaultPlayer){
+    public String play(String message, DefaultPlayer defaultPlayer) throws SQLException {
         String result = "Incorrect benefit";
         if(!message.isEmpty()) {
             if(message.equals(defaultPlayer.getCurrentAnswer())){
@@ -46,7 +47,7 @@ public class MainGame extends DefaultPlayer {
         return result;
     }
 
-    public String inGame(Update update) {
+    public String inGame(Update update) throws SQLException {
 
         String result = "";
         DefaultPlayer defaultPlayer = getPlayer(update.getMessage().getChatId());
