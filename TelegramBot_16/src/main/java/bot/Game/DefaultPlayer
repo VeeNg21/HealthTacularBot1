@@ -1,13 +1,24 @@
 package bot.Game;
 
+import bot.DbHandler;
+
+import java.sql.SQLException;
+
 public class DefaultPlayer implements Player {
 
     private int count;
     private String expectedAnswer;
     private String currentAnswer;
-    private boolean InGame;
-    private Long chatId;
+    private long chatId;
+    DbHandler dbHandler;
 
+    {
+        try {
+            dbHandler = DbHandler.getInstance();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void setExpectedAnswer(String expectedAnswer){
         this.expectedAnswer = expectedAnswer;
@@ -17,11 +28,11 @@ public class DefaultPlayer implements Player {
     public void upCount(){count++;}
 
     public boolean isInGame() {
-        return InGame;
+        return dbHandler.isInGame(chatId);
     }
 
-    public void setInGame(boolean inGame) {
-        InGame = inGame;
+    public void setInGame(boolean inGame) throws SQLException {
+        dbHandler.changePlay(chatId, inGame);
     }
 
     public Long getChatId() {
