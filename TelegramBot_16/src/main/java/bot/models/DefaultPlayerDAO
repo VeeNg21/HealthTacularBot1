@@ -1,1 +1,48 @@
 
+package bot.models;
+
+import bot.Game.DefaultPlayer;
+import bot.HibernateSessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import javax.persistence.Query;
+
+
+public class DefaultPlayerDAO {
+
+    public DefaultPlayer findByChatID(long chat_id) {
+
+        DefaultPlayer defaultPlayer;
+
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Query query = session.createQuery("from DefaultPlayer where chat_id = :chat_id");
+        query.setParameter("chat_id", chat_id);
+
+        try {
+            defaultPlayer = (DefaultPlayer) query.getSingleResult();
+            return defaultPlayer;
+        } catch (Exception e) {
+            return null;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void save(DefaultPlayer player){
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.save(player);
+        tx1.commit();
+        session.close();
+    }
+
+    public void update(DefaultPlayer player) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.update(player);
+        tx1.commit();
+        session.close();
+    }
+
+}
