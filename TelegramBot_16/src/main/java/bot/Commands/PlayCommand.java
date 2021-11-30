@@ -1,23 +1,22 @@
 package bot.Commands;
 
-import bot.DbHandler;
-import bot.Game.MainGame;
 import bot.Game.DefaultPlayer;
+import bot.Game.MainGame;
+import bot.models.DefaultPlayerDAO;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import java.sql.SQLException;
-
 public class PlayCommand extends ServiceCommand {
 
-    private final MainGame mainGame;
-    private final DbHandler dbHandler;
+    private MainGame mainGame;
+//    private DbHandler dbHandler;
+    private DefaultPlayerDAO defaultPlayerDAO;
 
-    public PlayCommand(String identifier, String description, MainGame mainGame) throws SQLException {
+    public PlayCommand(String identifier, String description, MainGame mainGame, DefaultPlayerDAO defaultPlayerDAO){
         super(identifier, description);
         this.mainGame = mainGame;
-        this.dbHandler = DbHandler.getInstance();
+        this.defaultPlayerDAO = defaultPlayerDAO;
     }
 
     @Override
@@ -26,31 +25,22 @@ public class PlayCommand extends ServiceCommand {
         String userName = (user.getUserName() != null) ? user.getUserName() :
                 String.format("%s %s", user.getLastName(), user.getFirstName());
 
-        DefaultPlayer defaultPlayer = new DefaultPlayer();
-        defaultPlayer.setChatId(chat.getId());
-        if(dbHandler.isInGame(chat.getId())) {
 
-            String result = "The game is already running.\n";
-            sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName, result);
+        DefaultPlayer defaultPlayer;
 
-        } else {
-        if(dbHandler.checkPlayer(chat.getId())) dbHandler.addPlayer(chat.getId());
-            try {
-                dbHandler.changePlay(chat.getId(), true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            mainGame.setPlayerList(chat.getId(), defaultPlayer);
-
-            try {
-                mainGame.getRandomValue(mainGame.getPlayer(chat.getId()));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            String result = "To end the game write: stop.\n" + defaultPlayer;
-            sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName, result);
+        if (defaultPlayerDAO.findByChatID(chat.getId()) == null) {
+            defaultPlayer = new DefaultPlayer(chat.getId(), true);
+            defaultPlayerDAO.save(defaultPlayer);
+        } else  {
+            defaultPlayer = defaultPlayerDAO.findByChatID(chat.getId());
+            defaultPlayer.setInGame(true);
+            defaultPlayerDAO.update(defaultPlayer);
         }
+
+        mainGame.getRandomValue(defaultPlayer);
+
+        String result = "To end the game write: stop.\n" + defaultPlayer;
+        sendAnswer(absSender, defaultPlayer.getChatId(), this.getCommandIdentifier(), userName, result);
 
     }
 }
