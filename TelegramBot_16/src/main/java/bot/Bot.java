@@ -3,6 +3,7 @@ package bot;
 import bot.Commands.PlayCommand;
 import bot.Commands.StartCommand;
 import bot.Game.MainGame;
+import bot.models.DefaultPlayerDAO;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,8 +16,9 @@ public class Bot extends TelegramLongPollingCommandBot {
     private final String botName;
     private final String botToken;
 
-    DbHandler dbHandler = DbHandler.getInstance();
     MainGame mainGame = new MainGame();
+//    DbHandler dbHandler = DbHandler.getInstance();
+    DefaultPlayerDAO defaultPlayerDAO = new DefaultPlayerDAO();
 
     public Bot(String botName, String botToken) throws SQLException {
         this.botName = botName;
@@ -24,7 +26,7 @@ public class Bot extends TelegramLongPollingCommandBot {
 
         register(new StartCommand("start", "Start"));
         register(new StartCommand("help", "Help"));
-        register(new PlayCommand("play", "Play game", mainGame));
+        register(new PlayCommand("play", "Play game", mainGame, defaultPlayerDAO));
     }
 
     @Override
@@ -37,16 +39,12 @@ public class Bot extends TelegramLongPollingCommandBot {
         return botToken;
     }
 
-
-    /**
-     * Ответ на запрос, не являющийся командой
-     */
     @Override
     public void processNonCommandUpdate(Update update) {
 
         String msg = null;
         try {
-            msg = mainGame.inGame(update);
+            msg = mainGame.inGame(update, defaultPlayerDAO);
         } catch (SQLException e) {
             e.printStackTrace();
         }
