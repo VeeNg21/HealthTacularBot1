@@ -1,5 +1,6 @@
 package bot.Game;
 
+import bot.models.DefaultPlayerDAO;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.sql.SQLException;
@@ -26,16 +27,16 @@ public class MainGame extends DefaultPlayer {
         items.put("celery", "bones");
     }
 
-    public void getRandomValue(DefaultPlayer defaultPlayer) throws SQLException {
+    public void getRandomValue(DefaultPlayer defaultPlayer){
         Random random = new Random();
         List<String> keys = new ArrayList<>(items.keySet());
         String question = keys.get(random.nextInt(keys.size()));
         defaultPlayer.setCurrentAnswer(items.get(question));
-        defaultPlayer.setInGame(true);
         defaultPlayer.setExpectedAnswer("Which organ does this vegetable help: " + question);
+        setPlayerList(defaultPlayer.getChatId(), defaultPlayer);
     }
 
-    public String play(String message, DefaultPlayer defaultPlayer) throws SQLException {
+    public String play(String message, DefaultPlayer defaultPlayer){
         String result = "Incorrect benefit";
         if(!message.isEmpty()) {
             if(message.equals(defaultPlayer.getCurrentAnswer())){
@@ -47,7 +48,7 @@ public class MainGame extends DefaultPlayer {
         return result;
     }
 
-    public String inGame(Update update) throws SQLException {
+    public String inGame(Update update, DefaultPlayerDAO defaultPlayerDAO) throws SQLException {
 
         String result = "";
         DefaultPlayer defaultPlayer = getPlayer(update.getMessage().getChatId());
@@ -55,9 +56,12 @@ public class MainGame extends DefaultPlayer {
         if(defaultPlayer.isInGame()) {
             if (update.hasMessage() && update.getMessage().hasText()) {
                 if (update.getMessage().getText().equals("stop")) {
+
+//                    dbHandler.changePlay(update.getMessage().getChatId(), false);
                     defaultPlayer.setInGame(false);
+                    defaultPlayerDAO.update(defaultPlayer);
                     result = "End game";
-                    removePlayer(update.getMessage().getChatId());
+//                    removePlayer(update.getMessage().getChatId());
                 } else {
                     String msg = update.getMessage().getText();
                     result = play(msg, defaultPlayer);
