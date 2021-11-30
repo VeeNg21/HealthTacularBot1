@@ -8,6 +8,8 @@ public class DbHandler {
 
     private static final String CON_STR = "jdbc:sqlite:bot.db";
 
+    // Use the singleton pattern to avoid spawning many
+    // instances of the DbHandler class
     private static DbHandler instance = null;
 
     public static synchronized DbHandler getInstance() throws SQLException {
@@ -22,11 +24,13 @@ public class DbHandler {
         this.connection = DriverManager.getConnection(CON_STR);
     }
 
-    public void addPlayer(long chat_id){
-        String query = "INSERT INTO Players (chat_id) VALUES (?)";
+    public void addPlayer(long chat_id, boolean inGame){
+        String query = "INSERT INTO Players(`chat_id`, `inGame`) VALUES (?, ?)";
         try(PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setObject(1, chat_id);
-            statement.executeUpdate();
+            statement.setObject(2, inGame);
+
+            statement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -39,31 +43,15 @@ public class DbHandler {
         }
     }
 
-    public boolean isInGame(long chat_id){
-
-        boolean inGame = false;
-
-        String query = "SELECT inGame FROM Players where chat_id = ?";
-        try(PreparedStatement statement = this.connection.prepareStatement(query)){
-            statement.setObject(1, chat_id);
-            ResultSet resultSet = statement.executeQuery();
-            if(resultSet.next()) inGame = resultSet.getBoolean("inGame");
-            return inGame;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return inGame;
-    }
-
-    public boolean checkPlayer(long chat_id){
+    public boolean checkPlayer(int chat_id){
         String query = "SELECT * FROM Players WHERE chat_id = ?";
         try(PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setObject(1, chat_id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) if(resultSet.getInt("chat_id") != 0) return false;
+            if (resultSet.next()) if(resultSet.getInt("chat_id") != 0) return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return true;
+        return false;
     }
 }
