@@ -1,24 +1,39 @@
 package bot.Game;
 
-import bot.DbHandler;
+import javax.persistence.*;
 
-import java.sql.SQLException;
-
+@Entity
+@Table(name = "Players")
 public class DefaultPlayer implements Player {
 
-    private int count;
-    private String expectedAnswer;
-    private String currentAnswer;
-    private long chatId;
-    DbHandler dbHandler;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    {
-        try {
-            dbHandler = DbHandler.getInstance();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    @Transient
+    private int count;
+
+    @Transient
+    private String expectedAnswer;
+
+    @Transient
+    private String currentAnswer;
+
+    @Column(name = "inGame")
+    private boolean InGame;
+
+    @Column(name = "chat_id")
+    private Long chatId;
+
+    public DefaultPlayer(){
+
     }
+
+    public DefaultPlayer(long chatId, boolean InGame) {
+        this.chatId = chatId;
+        this.InGame = InGame;
+    }
+
 
     public void setExpectedAnswer(String expectedAnswer){
         this.expectedAnswer = expectedAnswer;
@@ -28,11 +43,11 @@ public class DefaultPlayer implements Player {
     public void upCount(){count++;}
 
     public boolean isInGame() {
-        return dbHandler.isInGame(chatId);
+        return InGame;
     }
 
-    public void setInGame(boolean inGame) throws SQLException {
-        dbHandler.changePlay(chatId, inGame);
+    public void setInGame(boolean inGame) {
+        InGame = inGame;
     }
 
     public Long getChatId() {
