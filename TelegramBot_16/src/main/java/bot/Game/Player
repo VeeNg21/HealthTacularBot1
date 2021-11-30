@@ -1,7 +1,5 @@
 package bot.Game;
 
-import java.sql.SQLException;
-
 /**
  * interface that implements the player method
  */
@@ -14,7 +12,7 @@ public interface Player {
     void upCount();
 
     boolean isInGame();
-    void setInGame(boolean inGame) throws SQLException;
+    void setInGame(boolean inGame);
 
     Long getChatId();
     void setChatId(Long chatId);
