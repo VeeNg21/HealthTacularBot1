@@ -1,4 +1,3 @@
-
 package bot.models;
 
 import bot.Game.DefaultPlayer;
@@ -11,11 +10,17 @@ import javax.persistence.Query;
 
 public class DefaultPlayerDAO {
 
+    Session session;
+
+    public DefaultPlayerDAO(){
+
+        session = HibernateSessionFactory.getSessionFactory().openSession();
+    }
+
     public DefaultPlayer findByChatID(long chat_id) {
 
         DefaultPlayer defaultPlayer;
 
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Query query = session.createQuery("from DefaultPlayer where chat_id = :chat_id");
         query.setParameter("chat_id", chat_id);
 
@@ -30,7 +35,6 @@ public class DefaultPlayerDAO {
     }
 
     public void save(DefaultPlayer player){
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.save(player);
         tx1.commit();
@@ -38,11 +42,14 @@ public class DefaultPlayerDAO {
     }
 
     public void update(DefaultPlayer player) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.update(player);
         tx1.commit();
         session.close();
     }
 
+    public void close(){
+
+        session.close();
+    }
 }
