@@ -39,6 +39,7 @@ public class Bot extends TelegramLongPollingCommandBot {
         return botToken;
     }
 
+
     @Override
     public void processNonCommandUpdate(Update update) {
 
